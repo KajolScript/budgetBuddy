@@ -1,0 +1,69 @@
+body {
+    margin: 20px;
+    background-color: #f8f9fa;
+}
+
+.page-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.summary h2 {
+    color: #333;
+}
+
+/* Make the table responsive */
+.table-responsive {
+    margin-top: 20px;
+}
+
+.btn-primary {
+    margin-top: 15px;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 576px) {
+    .page-title {
+        font-size: 1.8em;
+    }
+    
+    .summary h2 {
+        font-size: 1.2em;
+    }
+    
+    table {
+        font-size: 0.9em;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 10px 0;
+    }
+}
+
+/* Change cursor to pointer for sortable columns */
+.sortable {
+    cursor: pointer;
+}
+
+/* Optional: Add hover effect to make it clearer that the column is clickable */
+.sortable:hover {
+    color: #007bff; /* Bootstrap primary color */
+    text-decoration: underline;
+}
+
+/* Optional: Add arrow styling for sorted columns */
+.sortable span {
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+
+/*.sortable.asc span::before {*/
+/*    content: "▲";  Up arrow for ascending */
+/*}*/
+
+/*.sortable.desc span::before {*/
+/*    content: "▼";  Down arrow for descending */
+/*}*/

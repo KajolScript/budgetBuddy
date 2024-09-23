@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>BUDGET BUDDY</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/main/resources/static/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Responsive meta tag -->
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center page-title" style="margin-bottom: 20px;">BUDGET BUDDY</h1>
+        
+		<div class="summary d-flex justify-content-between mt-4">
+		    <h4>Total Income: <span th:text="${totalIncome}"></span></h4>
+		    <h4>Total Expenses: <span th:text="${totalExpenses}"></span></h4>
+		    <h4>Balance: <span th:text="${balance}"></span></h4>
+		</div>
+
+        
+        <h2 class="mt-4">Transaction List</h2>
+        <div class="table-responsive"> <!-- Responsive table wrapper -->
+            <table class="table table-bordered table-striped" id="transactionTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="sortable" >Date</th>
+                        <th>Description</th>
+                        <th class="sortable" >Amount</th>
+                        <th class="sortable" >Type</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionBody">
+                    <tr th:each="transaction : ${transactions}" class="transaction-row">
+                        <td th:text="${transaction.formattedDate}"></td>
+                        <td th:text="${transaction.description}"></td>
+                        <td th:text="${transaction.amount}"></td>
+                        <td th:text="${transaction.type}"></td>
+                        <td th:text="${transaction.category}"></td>
+                        <td>
+                            <a class="btn btn-warning btn-sm" th:href="@{/transaction/edit/{id}(id=${transaction.id})}">Edit</a>
+                            <a class="btn btn-danger btn-sm" th:href="@{/transaction/delete/{id}(id=${transaction.id})}" onclick="return confirm('Are you sure?')">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="pagination" class="d-flex justify-content-between mt-3">
+            <button class="btn btn-secondary" id="prevBtn" onclick="changePage(-1)" disabled>Previous</button>
+            <button class="btn btn-secondary" id="nextBtn" onclick="changePage(1)">Next</button>
+        </div>
+
+        <a class="btn btn-primary mt-3" href="/transaction/new">Add New Transaction</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+
+	let currentPage = 1;
+	const rowsPerPage = 5;
+	let allTransactions = [];
+
+	// Initialize transactions on page load
+	function initTransactions() {
+	    const tableRows = Array.from(document.querySelectorAll('.transaction-row'));
+	    allTransactions = tableRows.map((row) => {
+	        const dateText = row.cells[0].innerText.trim();
+	        const amountText = row.cells[2].innerText.trim();
+
+	        // Parsing date and amount properly with validation
+	        const parsedDate = new Date(dateText); // Using built-in Date parsing
+	        const parsedAmount = parseFloat(amountText.replace(/[^0-9.-]+/g, '')); // Strip out non-numeric characters
+
+	        return {
+	            element: row,
+	            date: parsedDate, // Parsed date object
+	            description: row.cells[1].innerText.trim(),
+	            amount: isNaN(parsedAmount) ? 0 : parsedAmount, // Handle invalid amounts
+	            type: row.cells[3].innerText.trim().toLowerCase(), // Lowercasing for case-insensitive sorting
+	            category: row.cells[4].innerText.trim().toLowerCase(), // Lowercasing for case-insensitive sorting
+	        };
+	    });
+	}
+
+	// Display records for the current page
+	function displayPage(page) {
+	    const start = (page - 1) * rowsPerPage;
+	    const end = start + rowsPerPage;
+	    allTransactions.forEach((transaction, index) => {
+	        transaction.element.style.display = (index >= start && index < end) ? '' : 'none';
+	    });
+
+	    // Update pagination buttons
+	    document.getElementById('prevBtn').disabled = (page === 1);
+	    document.getElementById('nextBtn').disabled = (page === Math.ceil(allTransactions.length / rowsPerPage));
+	}
+
+	// Change the current page
+	function changePage(direction) {
+	    currentPage += direction;
+	    displayPage(currentPage);
+	}
+
+	// Sorting function with ascending/descending toggle
+	function sortTable(columnIndex) {
+	    const table = document.getElementById("transactionTable");
+	    const isAsc = table.getAttribute("data-sort") === "asc"; // Get current sort order
+
+	    const comparators = [
+	        (a, b) => a.date.getTime() - b.date.getTime(), // Date column
+	        (a, b) => a.description.localeCompare(b.description), // Description column
+	        (a, b) => a.amount - b.amount, // Amount column
+	        (a, b) => a.type.localeCompare(b.type), // Type column
+	        (a, b) => a.category.localeCompare(b.category), // Category column
+	    ];
+
+	    allTransactions.sort((a, b) => {
+	        const comparator = comparators[columnIndex] || ((a, b) => a.description.localeCompare(b.description));
+	        return isAsc ? comparator(a, b) : -comparator(a, b);
+	    });
+
+	    table.setAttribute("data-sort", isAsc ? "desc" : "asc"); // Toggle sorting order
+	    currentPage = 1; // Reset to the first page after sorting
+	    displayPage(currentPage);
+	}
+
+	// Initialize the table and pagination on page load
+	window.onload = () => {
+	    initTransactions();
+	    displayPage(currentPage);
+	};
+
+
+</script>
+</body>
+</html>

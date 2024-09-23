@@ -1,0 +1,55 @@
+body {
+    margin: 20px;
+    background-color: #f8f9fa;
+}
+
+h1 {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.form-control {
+    border-color: #007bff;
+    margin-bottom: 15px;
+}
+
+.btn-primary {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-primary:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.form-group label {
+    color: #495057;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+	background-color: aquamarine;
+}
+
+/* Add responsiveness for mobile devices */
+@media (max-width: 576px) {
+    body {
+        margin: 10px;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    .form-group label, 
+    .form-control {
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 10px 0;
+    }
+}
